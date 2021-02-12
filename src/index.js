@@ -1,31 +1,60 @@
 const { compose
-      , chunk 
-      }                 = require('lodash/fp')
+      , chunk
+			, head
+			, tail
+			, some
+			, findIndex
+			, map
+			, join
+			}								= require('lodash/fp')
 
-const ARGS              = process.argv.slice(2)
+const ARGS            = process.argv.slice(2)
 
-const hasRoot           = (x)       => Math.sqrt(x.length) % 1 === 0
+const N								= Math.sqrt(head(ARGS).length)
 
-const isLetterUC        = (x)       => /^[A-Z]+$/.test(x)
+// const trace						=	(x, y)	=> { console.log(x, y); return x}
 
-const checkARGS         = ([l, w])  => hasRoot(l) && isLetterUC(l) && isLetterUC(w)
-                                        ? [l, w]
-                                        : console.error('Unapproptiate input.')
+const isDimension			= (_)       => N % 1 === 0
 
-const constructMatrix   = ([l, w])  => ([ chunk(Math.sqrt(l.length), [...l]), w ])
+const isLettersUC			= (x)       => /^[A-Z]+$/.test(x)
 
-const findPath					= ([m, w])	=> m
+const checkARGS       = ([ls, w])	=> isDimension() && isLettersUC(ls) && isLettersUC(w)
+                                       	? [ls, w]
+                                     		: console.error('Inappropriate input.')
 
-const timerWrap         = (f, arg)  => { console.time(`Fnc executed in`); f(arg); console.timeEnd(`Fnc executed in`) }
+const constructMatrix = ([ls, w])	=> ([chunk(N, [...ls]), w])												// return [matrix, word]
 
-const solveWord         = compose(constructMatrix, checkARGS)
+const getPositionR		= ([
+													[M, l],
+												 	[m, n]
+												])				=> some((x) => x === l, head(M))
+																			? [m, findIndex((x) => x === l, head(M))]			// base case return position [m, n]
+																			: getPositionR([[tail(M), l], [m + 1, findIndex((x) => x === l, head(M))]])
 
-module.export           = { solveWord, ARGS }
+const maybePosition		= ([
+													[M, l],
+													[m, n]
+												])				=> { try { return getPositionR([[M, l], [m, n]]) } catch { console.error('Not all letters are present.')} }
 
-												timerWrap(solveWord, ARGS)
+const findPath				= ([M, w])	=> [...w].map((l) => maybePosition([[M, l], [0, 0]]))
 
-												console.log(solveWord(ARGS))
+const timerWrap				= (f, arg)  => { console.time(`Fnc executed in`); f(arg); console.timeEnd(`Fnc executed in`) }
 
-// l - letters
-// m - matrix
-// w - word
+const solveWord				= compose(findPath, constructMatrix, checkARGS)
+
+
+module.export					= { solveWord, ARGS }
+
+											console.log(`\nFind ${tail(ARGS)} in ${head(ARGS)}\n`)
+
+											timerWrap(solveWord, ARGS)
+
+											console.log('\n', join(' ', map((x) => (`-> [${x}]`), solveWord(ARGS))), '\n')
+
+// x  - some element
+// L 	- letters
+// l	- letter
+// M  - matrix
+// m 	- row
+// n	- column
+// w  - word
