@@ -34,7 +34,7 @@ const getPositionR    = ([
 const maybePosition   = ([
                           [M, l],
                           [m, n]
-												])        => { try { return getPositionR([[M, l], [m, n]]) } catch { console.error('Not all letters are present.')} }
+                        ])        => { try { return getPositionR([[M, l], [m, n]]) } catch { console.error('Not all letters are present.')} }
 
 const findPath        = ([M, w])  => [...w].map((l) => maybePosition([[M, l], [0, 0]]))
 
