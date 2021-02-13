@@ -1,21 +1,23 @@
 const { findIndex
       , compose
       , chunk
+      , isNil
       , head
       , tail
       , some
       , join
       , map
-      , isNil
       }               = require('lodash/fp')
 
 const ARGS            = process.argv.slice(2)
 
 const N               = Math.sqrt(head(ARGS).length)
 
-const trace           = (x, y)  => { console.log(x, y); return x }
+// const trace           = (x, y)    => { console.log(x, y); return x }                       // trace helper
 
-const TCO             = (f, argv) => f(argv)                                                        // tail call optimization
+// const TCO             = (f, argv) => f(argv)                                               // tail call optimization
+
+// const maybe           = (f, arg)    => { try { return (f(arg)) } catch { return undefined } }
 
 const isDimension     = (_)       => N % 1 === 0
 
@@ -26,8 +28,6 @@ const checkARGS       = ([ls, w]) => isDimension() && isLettersUC(ls) && isLette
                                       : console.error('Inappropriate input.')
 
 const constructMatrix = ([ls, w]) => ([chunk(N, [...ls]), w])                                 // return [matrix, word]
-
-const maybe           = (f, arg)    => { try { return (f(arg)) } catch { return undefined } }
 
 const nGetPositionR   = ([
                           [r, l],
@@ -49,20 +49,24 @@ const mnGetPositionR2  = ([                                                     
                          ])       => some((x) => x === l, head(M))
                                       ? [m, nGetPositionR([[head(M), l], [m, n]])]            // base case returns n recursively
                                       : mnGetPositionR2([[tail(M), l], [m + 1, n]])
-                      // ])       => {
-                      //               const nMaybe = maybe(nGetPositionR, [[head(M), l], [m, n]])
-                                    
-                      //               return isNil(nMaybe)                                   // recursive case 25 times slower then some()
-                      //                 ? mnGetPositionR2([[tail(M), l], [m + 1, n]])
-                      //                 : [m, nMaybe]
-                      //             }
+
+// const mnGetPositionR2  = ([
+//                           [M, l],
+//                           [m, n]
+//                          ])       => {
+//                                        const nMaybe = maybe(nGetPositionR, [[head(M), l], [m, n]])
+
+//                                        return isNil(nMaybe)                                 // recursive case 25 times slower then some()
+//                                          ? mnGetPositionR2([[tail(M), l], [m + 1, n]])
+//                                          : [m, nMaybe]
+//                                      }
 
 const maybePosition   = ([
                           [M, l],
                           [m, n]
                         ])        => { try { return mnGetPositionR2([[M, l], [m, n]]) } catch { console.error('Not all letters are present.')} }
 
-const findPath        = ([M, w])  => [...w].map((l) => maybePosition([[M, l], [0, 0]]))       // is already TCO
+const findPath        = ([M, w])  => [...w].map((l) => maybePosition([[M, l], [0, 0]]))
 
 const timerWrap       = (f, arg)  => { console.time(`Fnc executed in`); f(arg); console.timeEnd(`Fnc executed in`) }
 
