@@ -80,8 +80,6 @@ module.export         = { solveWord, ARGS }
 
                       timerWrap(solveWord, ARGS)
 
-                      console.log(msTimerWrap(solveWord, ARGS))
-
                       console.log('\n', join(' ', map((x) => (`-> [${x}]`), solveWord(ARGS))), '\n')
 
 // x  - some element
