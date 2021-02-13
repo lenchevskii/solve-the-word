@@ -9,7 +9,7 @@ const { findIndex
       , map
       }               = require('lodash/fp')
 
-const ARGS            = process.argv.slice(2)
+const ARGS            = process.argv.slice(2, 4)
 
 const N               = Math.sqrt(head(ARGS).length)
 
@@ -37,38 +37,39 @@ const nGetPositionR   = ([
                                       : nGetPositionR([[tail(r), l], [_, n + 1]])
 
 const mnGetPositionR1  = ([                                                                   // one recursion algorithm
-                          [M, l],
-                          [m, n]
+                           [M, l],
+                           [m, n]
                          ])       => some((x) => x === l, head(M))
                                       ? [m, findIndex((x) => x === l, head(M))]               // base case returns position [m, n]
                                       : mnGetPositionR1([[tail(M), l], [m + 1, n]])
 
 const mnGetPositionR2  = ([                                                                   // two recursions alrorithm
-                          [M, l],
-                          [m, n]
+                           [M, l],
+                           [m, n]
                          ])       => some((x) => x === l, head(M))
                                       ? [m, nGetPositionR([[head(M), l], [m, n]])]            // base case returns n recursively
                                       : mnGetPositionR2([[tail(M), l], [m + 1, n]])
 
 // const mnGetPositionR2  = ([
-//                           [M, l],
-//                           [m, n]
+//                            [M, l],
+//                            [m, n]
 //                          ])       => {
 //                                        const nMaybe = maybe(nGetPositionR, [[head(M), l], [m, n]])
 
-//                                        return isNil(nMaybe)                                 // recursive case 25 times slower then some()
+//                                        return isNil(nMaybe)                                 // recursion 25 times slower then some()
 //                                          ? mnGetPositionR2([[tail(M), l], [m + 1, n]])
 //                                          : [m, nMaybe]
 //                                      }
 
 const maybePosition   = ([
+                          f,
                           [M, l],
                           [m, n]
-                        ])        => { try { return mnGetPositionR2([[M, l], [m, n]]) } catch { console.error('Not all letters are present.')} }
+                        ])        => { try { return f([[M, l], [m, n]]) } catch { console.error('Not all letters are present.')} }
 
-const findPath        = ([M, w])  => [...w].map((l) => maybePosition([[M, l], [0, 0]]))
+const findPath        = ([M, w])  => [...w].map((l) => maybePosition([mnGetPositionR2, [M, l], [0, 0]]))
 
-const timerWrap       = (f, arg)  => { console.time(`Fnc executed in`); f(arg); console.timeEnd(`Fnc executed in`) }
+const timerWrap       = (f, arg)  => { console.time(`f() executed in`); f(arg); console.timeEnd(`f() executed in`) }
 
 const solveWord       = compose(findPath, constructMatrix, checkARGS)
 
@@ -78,6 +79,8 @@ module.export         = { solveWord, ARGS }
                       console.log(`\nFind ${tail(ARGS)} in ${head(ARGS)}\n`)
 
                       timerWrap(solveWord, ARGS)
+
+                      console.log(msTimerWrap(solveWord, ARGS))
 
                       console.log('\n', join(' ', map((x) => (`-> [${x}]`), solveWord(ARGS))), '\n')
 
