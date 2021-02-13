@@ -17,7 +17,7 @@ const N               = Math.sqrt(head(ARGS).length)
 
 // const TCO             = (f, argv) => f(argv)                                               // tail call optimization
 
-// const maybe           = (f, arg)    => { try { return (f(arg)) } catch { return undefined } }
+// const maybe           = (f, arg)  => { try { return (f(arg)) } catch { return undefined } }
 
 const isDimension     = (_)       => N % 1 === 0
 
