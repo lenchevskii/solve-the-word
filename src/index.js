@@ -1,7 +1,6 @@
 const { findIndex
       , compose
       , chunk
-      , isNil
       , head
       , tail
       , some
@@ -12,12 +11,6 @@ const { findIndex
 const ARGS            = process.argv.slice(2, 4)
 
 const N               = Math.sqrt(head(ARGS).length)
-
-// const trace           = (x, y)    => { console.log(x, y); return x }                       // trace helper
-
-// const TCO             = (f, argv) => f(argv)                                               // tail call optimization
-
-// const maybe           = (f, arg)  => { try { return (f(arg)) } catch { return undefined } }
 
 const isDimension     = (_)       => N % 1 === 0
 
@@ -49,17 +42,6 @@ const mnGetPositionR2  = ([                                                     
                          ])       => some((x) => x === l, head(M))
                                       ? [m, nGetPositionR([[head(M), l], [m, n]])]            // base case returns n recursively
                                       : mnGetPositionR2([[tail(M), l], [m + 1, n]])
-
-// const mnGetPositionR2  = ([
-//                            [M, l],
-//                            [m, n]
-//                          ])       => {
-//                                        const nMaybe = maybe(nGetPositionR, [[head(M), l], [m, n]])
-
-//                                        return isNil(nMaybe)                                 // recursion 25 times slower then some()
-//                                          ? mnGetPositionR2([[tail(M), l], [m + 1, n]])
-//                                          : [m, nMaybe]
-//                                      }
 
 const maybePosition   = ([
                           f,
