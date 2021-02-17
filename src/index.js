@@ -29,19 +29,19 @@ const nGetPositionR   = ([
                                       ? n
                                       : nGetPositionR([[tail(r), l], [_, n + 1]])
 
-const mnGetPositionR1  = ([                                                                   // one recursion algorithm
-                           [M, l],
-                           [m, n]
-                         ])       => some((x) => x === l, head(M))
-                                      ? [m, findIndex((x) => x === l, head(M))]               // base case returns position [m, n]
-                                      : mnGetPositionR1([[tail(M), l], [m + 1, n]])
+const mnGetPositionR1 = ([                                                                   // one recursion algorithm
+                          [M, l],
+                          [m, n]
+                        ])       => some((x) => x === l, head(M))
+                                     ? [m, findIndex((x) => x === l, head(M))]               // base case returns position [m, n]
+                                     : mnGetPositionR1([[tail(M), l], [m + 1, n]])
 
-const mnGetPositionR2  = ([                                                                   // two recursions alrorithm
-                           [M, l],
-                           [m, n]
-                         ])       => some((x) => x === l, head(M))
-                                      ? [m, nGetPositionR([[head(M), l], [m, n]])]            // base case returns n recursively
-                                      : mnGetPositionR2([[tail(M), l], [m + 1, n]])
+const mnGetPositionR2 = ([                                                                   // two recursions alrorithm
+                          [M, l],
+                          [m, n]
+                        ])       => some((x) => x === l, head(M))
+                                     ? [m, nGetPositionR([[head(M), l], [m, n]])]            // base case returns n recursively
+                                     : mnGetPositionR2([[tail(M), l], [m + 1, n]])
 
 const maybePosition   = ([
                           f,
